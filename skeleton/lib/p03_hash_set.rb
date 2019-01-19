@@ -7,12 +7,43 @@ class HashSet
   end
 
   def insert(key)
+    if @count == @store.count
+      resize!
+      modded = key.hash % @store.count
+
+      unless include?(key)
+        @store[modded] << key
+        @count += 1
+      end
+    else 
+      modded = key.hash % @store.count
+
+      unless include?(key)
+        @store[modded] << key
+        @count += 1
+      end
+    end
   end
 
-  def include?(key)
+  def include?(num)
+    @store.each do |bucket|
+      bucket.each do |el|
+        return true if num == el
+      end
+    end
+    false
   end
 
-  def remove(key)
+
+
+  
+  def remove(num)
+    @store.each do |bucket|
+      if bucket.include?(num)
+        bucket.delete(num)
+        @count -= 1
+      end
+    end
   end
 
   private
@@ -26,5 +57,15 @@ class HashSet
   end
 
   def resize!
+    new_arr = Array.new(num_buckets * 2){[]}
+    
+    @store.each do |bucket|
+      bucket.each do |el|
+        modded = el % new_arr.count
+        new_arr[modded] << el
+      end
+    end
+
+    @store = new_arr
   end
 end
